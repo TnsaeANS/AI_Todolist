@@ -15,7 +15,16 @@ You can add tasks with or without due dates.
   ```
   > add submit the report by next Friday
   Task added: 'submit the report', due 2025-07-11
-  ```
+  - **Task with a due date:**
+    ```
+    > add schedule dentist appointment for July 15th
+    Task added: 'schedule dentist appointment', due 2025-07-15
+    ```
+  - **Task with a due date and time:**
+    ```
+    > add schedule dentist appointment for July 15th at 3pm
+    Task added: 'schedule dentist appointment', due 2025-07-15 15:00
+    ```
 - **Different phrasing:**
   ```
   > create a new task: call the bank tomorrow
