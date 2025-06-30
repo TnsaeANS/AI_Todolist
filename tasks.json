@@ -1,72 +1,22 @@
 [
     {
-        "description": "i want to fly",
-        "status": "pending",
-        "due_date": null
-    },
-    {
-        "description": "die",
+        "description": "spm presentation",
         "status": "completed",
-        "due_date": null
+        "due_date": "2025-07-01"
     },
     {
-        "description": "kill",
-        "status": "completed",
-        "due_date": null
-    },
-    {
-        "description": "kill a nigga",
+        "description": "ai project submission",
         "status": "pending",
         "due_date": "2025-07-02"
     },
     {
-        "description": "i want to fly today",
-        "status": "completed",
-        "due_date": null
+        "description": "AI project presentation",
+        "status": "pending",
+        "due_date": "2025-07-10"
     },
     {
-        "description": "i want to fly",
+        "description": "Go to the movies",
         "status": "pending",
         "due_date": "2025-06-30"
-    },
-    {
-        "description": "watch movies",
-        "status": "pending",
-        "due_date": "2025-07-01"
-    },
-    {
-        "description": "watch tiktok",
-        "status": "pending",
-        "due_date": null
-    },
-    {
-        "description": "call the doctor on",
-        "status": "pending",
-        "due_date": "2025-08-15"
-    },
-    {
-        "description": "buy groceries in",
-        "status": "pending",
-        "due_date": "2025-06-27"
-    },
-    {
-        "description": "i want to a new : buy tequilla for my new born after",
-        "status": "pending",
-        "due_date": "2007-06-30"
-    },
-    {
-        "description": "a hospital appointment for and 4 minutes",
-        "status": "pending",
-        "due_date": "2015-06-30"
-    },
-    {
-        "description": "i need to a to prepare the presentation for",
-        "status": "pending",
-        "due_date": "2025-08-01"
-    },
-    {
-        "description": "spm presentation",
-        "status": "pending",
-        "due_date": "2025-07-01"
     }
 ]
