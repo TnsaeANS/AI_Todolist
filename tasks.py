@@ -1,4 +1,6 @@
-from storage import save_tasks
+import json
+from storage import load_tasks, save_tasks
+
 
 def add_task(tasks, description, due_date=None):
     tasks.append({"description": description, "status": "pending", "due_date": due_date})
