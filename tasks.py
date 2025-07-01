@@ -2,11 +2,19 @@ import json
 from storage import load_tasks, save_tasks
 
 
-def add_task(tasks, description, due_date=None):
-    tasks.append({"description": description, "status": "pending", "due_date": due_date})
+def add_task(tasks, description, due_date=None, due_time=None, importance="medium importance"):
+    tasks.append({
+        "description": description,
+        "status": "pending",
+        "due_date": due_date,
+        "due_time": due_time,
+        "importance": importance
+    })
     save_tasks(tasks)
     due_date_info = f", due {due_date}" if due_date else ""
-    print(f"Task added: '{description}'{due_date_info}")
+    due_time_info = f" at {due_time}" if due_time else ""
+    print(f"Task added: '{description}'{due_date_info}{due_time_info}, importance: {importance}")
+
 
 def delete_task(tasks, task_id):
     try:

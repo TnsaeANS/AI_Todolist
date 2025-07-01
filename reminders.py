@@ -8,12 +8,15 @@ def show_reminders(tasks):
 
     for t in tasks:
         if t["status"] == "pending" and t.get("due_date"):
-            # Overdue by date
             if t["due_date"] < today_str:
                 reminders.append((t, "Overdue"))
-            # Due today and time has passed
-            elif t["due_date"] == today_str and t.get("due_time"):
-                if t["due_time"] <= time_str:
-                    reminders.append((t, "Due Now"))
+            elif t["due_date"] == today_str:
+                if t.get("due_time"):
+                    if t["due_time"] <= time_str:
+                        reminders.append((t, "Due Now"))
+                    else:
+                        reminders.append((t, "Due Today"))
+                else:
+                    reminders.append((t, "Due Today"))
 
     return reminders
