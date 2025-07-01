@@ -10,7 +10,8 @@ To run the python project- Clone the github to personal device
                                -pip install spacy
                                -pip install dateparser
                                -pip install json
-- Run python main.py
+                               -pip install streamlit
+- Run streamlit run app.py
 All Done!
 
 

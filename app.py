@@ -4,6 +4,11 @@ from tasks import add_task, delete_task, complete_task
 from storage import load_tasks, save_tasks
 from reminders import show_reminders
 
+def load_custom_css(file_path="style.css"):
+    with open(file_path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+load_custom_css()
+
 # Initialize session state variables early
 if "tasks" not in st.session_state:
     st.session_state.tasks = load_tasks()
@@ -12,36 +17,25 @@ if "show_add_form" not in st.session_state:
 if "edit_task_index" not in st.session_state:
     st.session_state.edit_task_index = None
 
-# Define add task callback function
-def add_task_callback():
-    if st.session_state.new_description.strip() == "":
-        st.session_state.add_task_error = "Please provide a task description."
-        return
-
-    # Convert due date (datetime.date) to string if not None
-    due_date_obj = st.session_state.new_due_date
-    due_date_str = due_date_obj.strftime("%Y-%m-%d") if due_date_obj else None
-
-    add_task(st.session_state.tasks, st.session_state.new_description, due_date_str)
-    save_tasks(st.session_state.tasks)
-    st.session_state.show_add_form = False
-    st.session_state.new_description = ""
-    st.session_state.new_due_date = None  # reset date picker
-    st.session_state.add_task_error = ""
-
 # Callback to mark task as complete
 def complete_task_callback(task_index):
     if st.session_state.tasks[task_index]["status"] != "completed":
         complete_task(st.session_state.tasks, str(task_index + 1))
         save_tasks(st.session_state.tasks)
 
+# Callback to toggle task status based on checkbox state
+def toggle_task_status(index):
+    key = f"check_{index}"
+    is_checked = st.session_state.get(key, False)
+    task = st.session_state.tasks[index]
+    task["status"] = "completed" if is_checked else "pending"
+    save_tasks(st.session_state.tasks)
+
 # Callback to delete a task
 def delete_task_callback(task_index):
     delete_task(st.session_state.tasks, str(task_index + 1))
     save_tasks(st.session_state.tasks)
-    # Hide menu after delete
     st.session_state.pop(f"show_menu_{task_index}", None)
-    # If editing the deleted task, clear edit index
     if st.session_state.edit_task_index == task_index:
         st.session_state.edit_task_index = None
 
@@ -53,6 +47,12 @@ def edit_task_callback(task_index):
 st.set_page_config(page_title="AI To-Do", layout="wide")
 st.title("To-Do List Assistant")
 
+color_map = {
+    "Overdue": "red",
+    "Due Today": "orange",
+    "Due Now": "green"
+}
+
 reminders = show_reminders(st.session_state.tasks)
 if reminders:
     with st.expander("🔔 You have tasks that are due or overdue!", expanded=True):
@@ -60,105 +60,153 @@ if reminders:
             due_info = f"{task['due_date']}"
             if task.get("due_time"):
                 due_info += f" at {task['due_time']}"
-            st.markdown(f"- **{task['description']}** → _{kind}_ (Due: `{due_info}`)")
+            color = color_map.get(kind, "gray")
+            st.markdown(
+                f"<div style='color:{color}; font-weight:bold;'>"
+                f"• {task['description']} → {kind} (Due: {due_info})"
+                f"</div>",
+                unsafe_allow_html=True
+            )
 
-st.button(
-    "Add Tasks",
-    key="fallback_add_button",
-    on_click=lambda: st.session_state.update({"show_add_form": True}),
-)
+btn_col1, btn_col2, _ = st.columns([1, 1, 4])
+with btn_col1:
+    st.button(
+        "Add Task",
+        key="add_task_btn",
+        on_click=lambda: st.session_state.update({"show_add_form": True}),
+        use_container_width=True
+    )
+with btn_col2:
+    if st.button("⚡ AI Organize", key="ai_organize_btn", use_container_width=True):
+        importance_rank = {
+            "very important": 0,
+            "medium importance": 1,
+            "low": 2
+        }
+        st.session_state.tasks.sort(key=lambda t: importance_rank.get(t.get("importance", "medium importance")))
+        save_tasks(st.session_state.tasks)
+        st.success("Tasks organized by importance.")
 
 # Add Task form
 if st.session_state.show_add_form:
-    st.text_input("Task description", key="new_description")
+    st.markdown("### 📝 Add New Task")
+    st.markdown("Fill in the details for your new task.")
 
-    new_due = st.session_state.get("new_due_date")
-    if not isinstance(new_due, datetime.date):
-        new_due = None
-    st.date_input("Due date (optional)", key="new_due_date", value=new_due)
+    with st.container():
+        with st.columns([1, 5, 1])[1]:
+            st.text_input("Task", key="new_description", placeholder="e.g., Finish project report")
+            st.selectbox("Importance", ["very important", "medium importance", "low"], index=1, key="new_importance")
+            st.date_input("Deadline", key="new_due_date")
 
-    if st.button("Add Task", on_click=add_task_callback):
-        st.success("Task added!")
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col1:
+                hour = st.selectbox("Hour", list(range(1, 13)), key="due_hour")
+            with col2:
+                minute = st.selectbox("Minute", [f"{i:02}" for i in range(0, 60, 5)], key="due_minute")
+            with col3:
+                ampm = st.selectbox("AM/PM", ["AM", "PM"], key="due_ampm")
 
-    if st.session_state.get("add_task_error"):
-        st.error(st.session_state.add_task_error)
+            due_time_str = f"{hour}:{minute} {ampm}"
+
+            if st.button("Create Task", key="create_task_button"):
+                if not st.session_state.new_description.strip():
+                    st.error("Please enter a task description.")
+                else:
+                    due_date_obj = st.session_state.new_due_date
+                    due_date_str = due_date_obj.strftime("%Y-%m-%d") if due_date_obj else None
+
+                    add_task(
+                        st.session_state.tasks,
+                        st.session_state.new_description,
+                        due_date_str,
+                        due_time_str,
+                        st.session_state.new_importance
+                    )
+                    save_tasks(st.session_state.tasks)
+                    st.success("Task created!")
+                    st.session_state.show_add_form = False
+                    st.rerun()
 
 st.subheader("📋 Your Tasks")
 
 if st.session_state.tasks:
-    # Split tasks into two halves for two-column display
     half = (len(st.session_state.tasks) + 1) // 2
     left_tasks = st.session_state.tasks[:half]
     right_tasks = st.session_state.tasks[half:]
 
     left_col, right_col = st.columns(2)
 
-    def render_tasks_in_col(col, tasks_list, start_idx):
-        with col:
-            for idx, task in enumerate(tasks_list):
-                i = start_idx + idx
-                cols = st.columns([0.07, 0.75, 0.18])
+def render_tasks_in_col(col, tasks_list, start_idx):
+    with col:
+        for idx, task in enumerate(tasks_list):
+            i = start_idx + idx
+            checkbox_key = f"check_{i}"
+            cols = st.columns([0.07, 0.75, 0.18])
 
-                with cols[0]:
-                    checked = task["status"] == "completed"
-                    st.checkbox(
-                        "",
-                        value=checked,
-                        key=f"check_{i}",
-                        on_change=complete_task_callback,
-                        args=(i,),
-                        label_visibility="hidden",
-                    )
+            if checkbox_key not in st.session_state:
+                st.session_state[checkbox_key] = task["status"] == "completed"
 
-                with cols[1]:
-                    desc = task["description"]
-                    if task["status"] == "completed":
-                        desc = f"~~{desc}~~"  # strikethrough markdown
-                    due_text = f"(Due: {task['due_date']})" if task.get("due_date") else ""
-                    st.markdown(f"**{i + 1}. {desc}** {due_text}")
+            with cols[0]:
+                st.checkbox("", key=checkbox_key, on_change=toggle_task_status, args=(i,), label_visibility="hidden")
 
-                with cols[2]:
-                    if st.button("⋮", key=f"menu_{i}"):
-                        st.session_state[f"show_menu_{i}"] = not st.session_state.get(f"show_menu_{i}", False)
+            with cols[1]:
+                overdue = (
+                    task.get("due_date")
+                    and task["due_date"] < datetime.datetime.now().strftime("%Y-%m-%d")
+                    and task["status"] == "pending"
+                )
+                desc = (
+                    f"<span class='task-title'>{'~~' + task['description'] + '~~' if task['status'] == 'completed' else task['description']}</span>"
+                )
+                due_str = f"{task.get('due_date', '')}"
+                if task.get("due_time"):
+                    due_str += f" at {task['due_time']}"
+                overdue_badge = f"<span class='overdue'>⚠️ Overdue</span>" if overdue else ""
+                st.markdown(
+                    f"""
+                    <div class='task-card'>
+                        {desc}<br/>
+                        <div class='task-meta'>
+                             🗓️ {due_str} {overdue_badge}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-                    if st.session_state.get(f"show_menu_{i}", False):
-                        st.button("Edit", key=f"edit_{i}", on_click=edit_task_callback, args=(i,))
-                        st.button("Delete", key=f"delete_{i}", on_click=delete_task_callback, args=(i,))
+            with cols[2]:
+                st.button("✏️", key=f"edit_{i}", on_click=edit_task_callback, args=(i,))
+                st.button("🗑️", key=f"delete_{i}", on_click=delete_task_callback, args=(i,))
 
-    render_tasks_in_col(left_col, left_tasks, 0)
-    render_tasks_in_col(right_col, right_tasks, half)
+render_tasks_in_col(left_col, left_tasks, 0)
+render_tasks_in_col(right_col, right_tasks, half)
 
-    # Edit form
-    if st.session_state.edit_task_index is not None:
-        idx = st.session_state.edit_task_index
-        st.markdown("---")
-        st.subheader(f"✏️ Edit Task {idx + 1}")
+if st.session_state.edit_task_index is not None:
+    idx = st.session_state.edit_task_index
+    st.markdown("---")
+    st.subheader(f"✏️ Edit Task {idx + 1}")
 
-        def update_task():
-            # Convert edited_due (date) to string or None before saving
-            due_date_obj = st.session_state.edited_due
-            due_date_str = due_date_obj.strftime("%Y-%m-%d") if due_date_obj else None
+    def update_task():
+        due_date_obj = st.session_state.edited_due
+        due_date_str = due_date_obj.strftime("%Y-%m-%d") if due_date_obj else None
+        st.session_state.tasks[idx]["description"] = st.session_state.edited_desc
+        st.session_state.tasks[idx]["due_date"] = due_date_str
+        save_tasks(st.session_state.tasks)
+        st.success("Task updated!")
+        st.session_state.edit_task_index = None
 
-            st.session_state.tasks[idx]["description"] = st.session_state.edited_desc
-            st.session_state.tasks[idx]["due_date"] = due_date_str
-            save_tasks(st.session_state.tasks)
-            st.success("Task updated!")
-            st.session_state.edit_task_index = None
+    if "edited_desc" not in st.session_state:
+        st.session_state.edited_desc = st.session_state.tasks[idx]["description"]
+    if "edited_due" not in st.session_state:
+        due_str = st.session_state.tasks[idx].get("due_date", "")
+        if due_str:
+            st.session_state.edited_due = datetime.datetime.strptime(due_str, "%Y-%m-%d").date()
+        else:
+            st.session_state.edited_due = None
 
-        # Initialize edit fields in session state if missing
-        if "edited_desc" not in st.session_state:
-            st.session_state.edited_desc = st.session_state.tasks[idx]["description"]
-        if "edited_due" not in st.session_state:
-            due_str = st.session_state.tasks[idx].get("due_date", "")
-            if due_str:
-                st.session_state.edited_due = datetime.datetime.strptime(due_str, "%Y-%m-%d").date()
-            else:
-                st.session_state.edited_due = None
-
-        with st.form("edit_form"):
-            st.text_input("Task description", key="edited_desc")
-            st.date_input("Due date", key="edited_due", value=st.session_state.edited_due)
-            st.form_submit_button("Update Task", on_click=update_task)
-
+    with st.form("edit_form"):
+        st.text_input("Task description", key="edited_desc")
+        st.date_input("Due date", key="edited_due", value=st.session_state.edited_due)
+        st.form_submit_button("Update Task", on_click=update_task)
 else:
-    st.write("You don't have any tasks yet.")
+    st.write("You don't have any tasks to edit yet.")

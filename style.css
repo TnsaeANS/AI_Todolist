@@ -1,0 +1,54 @@
+body {
+    background-color: #f6eaff;
+    font-family: 'Segoe UI', sans-serif;
+}
+.task-card {
+    background-color: #3eb48a;
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+}
+.task-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+.task-meta {
+    font-size: 0.85rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+}
+.badge {
+    border-radius: 8px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+}
+.badge.high { background-color: #dba9f5; color: #6600cc; }
+.badge.medium { background-color: #fbd38d; color: #a14f00; }
+.badge.low { background-color: #c6f6d5; color: #22543d; }
+
+.overdue {
+    color: red;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.checkbox-col {
+    display: flex;
+    align-items: start;
+    padding-top: 0.5rem;
+}
