@@ -1,16 +1,1 @@
-[
-    {
-        "description": "AI assignment submission",
-        "status": "pending",
-        "due_date": "2025-07-03",
-        "due_time": "6:00 AM",
-        "importance": "very important"
-    },
-    {
-        "description": "Watch movies with friends",
-        "status": "pending",
-        "due_date": "2025-06-30",
-        "due_time": "11:00 AM",
-        "importance": "low"
-    }
-]
+[]
