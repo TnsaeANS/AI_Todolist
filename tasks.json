@@ -1,16 +1,44 @@
 [
     {
-        "description": "AI assignment submission",
+        "description": "eat m&ms",
         "status": "pending",
-        "due_date": "2025-07-03",
-        "due_time": "6:00 AM",
+        "due_date": "2025-07-10",
+        "due_time": "1:00 AM",
         "importance": "very important"
+    },
+    {
+        "description": "submit report ",
+        "status": "pending",
+        "due_date": "2025-07-02",
+        "due_time": "6:15 AM",
+        "importance": "very important"
+    },
+    {
+        "description": "Go to the movies",
+        "status": "pending",
+        "due_date": "2025-07-01",
+        "due_time": "11:00 PM",
+        "importance": "very important"
+    },
+    {
+        "description": "submit report",
+        "status": "pending",
+        "due_date": "2025-07-09",
+        "due_time": "12:00 PM",
+        "importance": "very important"
+    },
+    {
+        "description": "finnish up every project",
+        "status": "pending",
+        "due_date": "2025-05-01",
+        "due_time": "1:00 AM",
+        "importance": "low"
     },
     {
         "description": "Watch movies with friends",
         "status": "pending",
-        "due_date": "2025-06-30",
-        "due_time": "11:00 AM",
+        "due_date": "2025-07-01",
+        "due_time": "9:00 PM",
         "importance": "low"
     }
 ]
