@@ -197,8 +197,12 @@ if st.session_state.edit_task_index is not None:
     def update_task():
         due_date_obj = st.session_state.edited_due
         due_date_str = due_date_obj.strftime("%Y-%m-%d") if due_date_obj else None
+
         st.session_state.tasks[idx]["description"] = st.session_state.edited_desc
         st.session_state.tasks[idx]["due_date"] = due_date_str
+        st.session_state.tasks[idx]["due_time"] = f"{st.session_state.edited_hour}:{st.session_state.edited_minute} {st.session_state.edited_ampm}"
+        st.session_state.tasks[idx]["importance"] = st.session_state.edited_importance
+
         save_tasks(st.session_state.tasks)
         st.success("Task updated!")
         st.session_state.edit_task_index = None
@@ -211,10 +215,35 @@ if st.session_state.edit_task_index is not None:
             st.session_state.edited_due = datetime.datetime.strptime(due_str, "%Y-%m-%d").date()
         else:
             st.session_state.edited_due = None
+    if "edited_importance" not in st.session_state:
+        st.session_state.edited_importance = st.session_state.tasks[idx].get("importance", "medium importance")
+
+    current_due_time = st.session_state.tasks[idx].get("due_time", "12:00 PM")
+    try:
+        hour_str, rest = current_due_time.split(":")
+        minute_str, ampm = rest.split(" ")
+        hour = int(hour_str)
+        minute = minute_str
+    except:
+        hour, minute, ampm = 12, "00", "PM"
+
+    st.session_state.edited_hour = hour
+    st.session_state.edited_minute = minute
+    st.session_state.edited_ampm = ampm
 
     with st.form("edit_form"):
         st.text_input("Task description", key="edited_desc")
         st.date_input("Due date", key="edited_due", value=st.session_state.edited_due)
+        st.selectbox("Importance", ["very important", "medium importance", "low"], key="edited_importance")
+
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            st.selectbox("Hour", list(range(1, 13)), key="edited_hour")
+        with col2:
+            st.selectbox("Minute", [f"{i:02}" for i in range(0, 60, 5)], key="edited_minute")
+        with col3:
+            st.selectbox("AM/PM", ["AM", "PM"], key="edited_ampm")
+
         st.form_submit_button("Update Task", on_click=update_task)
 else:
     st.write("You don't have any tasks to edit yet.")
