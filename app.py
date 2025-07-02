@@ -127,14 +127,6 @@ if st.session_state.show_add_form:
                     st.session_state.show_add_form = False
                     st.rerun()
 
-st.subheader("📋 Your Tasks")
-
-if st.session_state.tasks:
-    half = (len(st.session_state.tasks) + 1) // 2
-    left_tasks = st.session_state.tasks[:half]
-    right_tasks = st.session_state.tasks[half:]
-
-    left_col, right_col = st.columns(2)
 
 def render_tasks_in_col(col, tasks_list, start_idx):
     with col:
@@ -178,8 +170,24 @@ def render_tasks_in_col(col, tasks_list, start_idx):
                 st.button("✏️", key=f"edit_{i}", on_click=edit_task_callback, args=(i,))
                 st.button("🗑️", key=f"delete_{i}", on_click=delete_task_callback, args=(i,))
 
-render_tasks_in_col(left_col, left_tasks, 0)
-render_tasks_in_col(right_col, right_tasks, half)
+# render_tasks_in_col(left_col, left_tasks, 0)
+# render_tasks_in_col(right_col, right_tasks, half)
+
+st.subheader("📋 Your Tasks")
+
+# Create columns (they'll exist even if empty)
+left_col, right_col = st.columns(2)
+
+if st.session_state.tasks:
+    half = (len(st.session_state.tasks) + 1) // 2
+    left_tasks = st.session_state.tasks[:half]
+    right_tasks = st.session_state.tasks[half:]
+
+    render_tasks_in_col(left_col, left_tasks, 0)
+    render_tasks_in_col(right_col, right_tasks, half)
+else:
+    left_col.write("No tasks to display. Add a task to get started!")
+
 
 if st.session_state.edit_task_index is not None:
     idx = st.session_state.edit_task_index
