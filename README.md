@@ -15,7 +15,63 @@ To run the python project- Clone the github to personal device
 All Done!
 
 
-# AI To-Do List Assistant - Usage Guide
 
-This guide provides examples of how to interact with the AI To-Do List Assistant. The assistant uses natural language processing, so you can phrase your commands in various ways.
+# AI To-Do CLI - Natural Language Task Manager
 
+## Overview
+This command-line interface (CLI) application lets you manage tasks using natural language commands. The system understands phrases like:
+
+```bash
+"Add finish project by Friday"
+"Delete task 3" 
+"Complete the budget report task"
+
+Installation
+Prerequisites:
+
+    Python 3.7+
+
+    spaCy language model
+
+Setup:
+
+    bash
+    pip install spacy dateparser
+    python -m spacy download en_core_web_sm
+
+
+Basic Commands
+
+>>> add complete sales report by tomorrow
+Added: "complete sales report" (Due: 2023-11-16)
+
+>>> list
+1. complete sales report [pending] (Due: 2023-11-16)
+2. call client [completed]
+
+>>> complete 1
+Marked task 1 as complete
+
+>>> delete 2
+Deleted: "call client"
+
+
+Natural Language Examples
+Adding tasks:
+
+```bash
+add book flights for vacation next Monday
+create very important task: finish presentation ASAP
+insert "call mom" Sunday at 2pm
+Modifying tasks:
+
+```bash
+delete task number 3
+complete the budget analysis
+remove low priority tasks
+Viewing:
+
+```bash
+show all tasks
+list pending items  
+display completed work
