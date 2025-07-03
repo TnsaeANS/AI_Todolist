@@ -11,7 +11,8 @@ To run the python project- Clone the github to personal device
                                -pip install dateparser
                                -pip install json
                                -pip install streamlit
-- Run streamlit run app.py
+- Run streamlit run app.py for the UI
+- Run python cli_nlp.py for the command line
 All Done!
 
 
