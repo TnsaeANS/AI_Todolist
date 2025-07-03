@@ -1,12 +1,5 @@
 [
     {
-        "description": "eat m&ms",
-        "status": "pending",
-        "due_date": "2025-07-10",
-        "due_time": "1:00 AM",
-        "importance": "very important"
-    },
-    {
         "description": "submit report ",
         "status": "pending",
         "due_date": "2025-07-02",
@@ -26,6 +19,13 @@
         "due_date": "2025-07-09",
         "due_time": "12:00 PM",
         "importance": "very important"
+    },
+    {
+        "description": "eat m&msg",
+        "status": "pending",
+        "due_date": "2025-07-11",
+        "due_time": "6:30 PM",
+        "importance": "low"
     },
     {
         "description": "finnish up every project",

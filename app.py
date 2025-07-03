@@ -233,7 +233,8 @@ if st.session_state.edit_task_index is not None:
 
     with st.form("edit_form"):
         st.text_input("Task description", key="edited_desc")
-        st.date_input("Due date", key="edited_due", value=st.session_state.edited_due)
+        st.date_input("Due date", key="edited_due")
+
         st.selectbox("Importance", ["very important", "medium importance", "low"], key="edited_importance")
 
         col1, col2, col3 = st.columns([1, 1, 1])
